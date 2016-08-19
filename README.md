@@ -25,3 +25,6 @@ If you want to try using your own puzzle, run the program by typing ./sudoku and
 403905280
 506080007
 000607940
+if you try this
+lets try this
+ig agsa

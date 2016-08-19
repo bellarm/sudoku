@@ -11,8 +11,9 @@ Instruction:
 Compile the program using this command:
 gcc -Wall -Werror -O -o sudoku sudoku.c
 
-If you have downloaded my test cases (and make sure they're in the same directory xD), run it by typing:
+If you have downloaded my test cases run it by typing:
 ./sudoku < test1.txt
+(make sure they are in the same directory)
 
 If you want to try using your own puzzle, run the program by typing ./sudoku and enter your puzzle in this format:
 010200304

@@ -2,10 +2,9 @@
 import sys
 
 """ SUDOKU
-    will probably need:
-        - THE GRID -> 9x9 array?
-        - INITIALISATION Function
-        - Solve
+    will need:
+        - THE GRID -> 9x9 array
+        - Solve function
 """
 class Sudoku(object):
     def __init__(self):

@@ -1,7 +1,7 @@
 # sudoku
 Hello world!
 
-My name is Bella Mangunsong, and I am a computer science student at The University of New South Wales. I started this sudoku solver project for one of my computing subjects. At this point, I'm pretty sure this will solve any sudoku puzzle (maybe not a very hard one). Let me know if this could not solve your puzzle! :)
+My name is Bella Mangunsong, and I am a computer science student at The University of New South Wales. I started this sudoku solver project for one of my computing subjects. At this point, I'm pretty sure this will solve any sudoku puzzle. Let me know if this could not solve your puzzle! :)
 
 Instruction:
 

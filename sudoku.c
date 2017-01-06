@@ -35,29 +35,27 @@ typedef struct _grid {
 typedef grid * Grid;
 void printPuzzle(void);
 void printLine(void);
-void solveSudoku(void);
 int compareCol (char a, int col);
 int compareRow (char a, int row);
 int compareReg (char a, int col, int row);
-int new(int row, int col);
+int solve(int row, int col);
 
 grid box[ROW][COL+1] = {0};
 
 int main (int argc, char * argv[]) {
 
     //The [COL+1] is to acount new line ('\n')
-
-    int col = 0; // the puzzle is stored as a 9x9 box
+    // the puzzle is stored as a 9x9 box
+    int col = 0; 
     int row = 0; 
 
     while(row < ROW) {
-        
         col = 0;
         while (col < COL+1) {
             box[row][col].num = getchar();
             if(box[row][col].num != '\n'){
                 assert(box[row][col].num >= '0' && 
-                        box[row][col].num <= '9');
+                       box[row][col].num <= '9');
             }
             if(box[row][col].num != '0'){
                 box[row][col].given = TRUE;
@@ -70,8 +68,8 @@ int main (int argc, char * argv[]) {
     }
     //put terminating character at the end of the array
     box[ROW-1][COL].num = 0;
-
-    if (new(0,0)) {
+    printPuzzle();
+    if (solve(0,0)) {
         printPuzzle();
     } else {
         printf("puzzle could not be solved\n");
@@ -95,11 +93,12 @@ void printPuzzle(void){
             if (col % REG_ROW == 0) {
                 printf("| ");
             }
-            if (box[row][col].given == TRUE){
-                printf("\x1b[1;33m"); //print in bold
+            if (box[row][col].given == TRUE) {
+                //print in bold
+                printf("\x1b[1;33m"); 
             }
-
-            printf("%c ", box[row][col].num); //actual number inside the box
+            //actual number inside the box
+            printf("%c ", box[row][col].num); 
             printf("\x1b[0m");
             col++;
         }           
@@ -122,129 +121,47 @@ void printLine(void){
     printf("\n");
 }
 
-
-// Solve the puzzle
-void solveSudoku(void){
-    int row = 0;
-    int col = 0;
-    char a = '1';
-    while (row < ROW && a != ':') {
-        col = 0;
-        while (col < COL && a != ':') {
-            if (box[row][col].num == '0') {
-                a = '1';
-                while(box[row][col].num == '0'){
-                    if(compareCol(a, col) == TRUE &&
-                        compareRow(a, row) == TRUE &&
-                        compareReg(a, col, row) == TRUE){
-                        box[row][col].num = a;
-                    } else {
-                        a++;
-                    }
-                }
-            }
-            col++;
-        }
-        row++; 
-        
-    }
-    if (a == ':') {
-        printf("Puzzle can not be solved\n");
-    } else {
-        printPuzzle();
-    }
-
-}
-
 int compareCol (char a, int col){
     int i = 0;
-    int j = 0;
-
-    while (i < ROW){
-        if (a == box[i][col].num){
-            j++;
+    int same = 0;
+    for (i = 0; i < ROW; i++) {
+        if (a == box[i][col].num) {
+            same++;
         }
-        i++;
     }
-
-    if(j > 0){
-        i = FALSE;
-    } else {
-        i = TRUE;
-    }
-    return i;
+    return (same > 0) ? FALSE : TRUE;
 }
 
 int compareRow (char a, int row){
     int i = 0;
-    int j = 0;
-    printPuzzle();
-    while (i < COL){
-        if (a == box[row][i].num){
-            j++;
+    int same = 0;
+    for (i = 0; i < COL; i++) {
+        if (a == box[row][i].num) {
+            same++;
         }
-        printf(" %d,%d -> %c\n", row, i, box[row][i].num);
-        i++;
     }
-    printf("\n");
-    if(j > 0){
-        i = FALSE;
-    } else {
-        i = TRUE;
-    }
-    return i;
+    return (same > 0) ? FALSE : TRUE;
 }
 
 int compareReg (char a, int col, int row){
-
-    row = row / 3;
-    col = col / 3;
-    int i = 3*row;
-    int j = 3*col;
-    int colF = j;
-    row = i + 3;
-    col = j + 3;
-
-    int k = 0;
-    int l = 0;
-    //printf("%d-%d, %d-%d\n", i,row, j, col);
-    while (i < row){
-        j = colF;
-        while (j < col){
+    int rowStart = row/3*3;
+    int colStart = col/3*3;
+    row = rowStart + 3;
+    col = colStart + 3;
+    int i, j, same = 0;
+    for (i = rowStart; i < row; i++) {
+        for (j = colStart; j < col; j++) {
             if (a == box[i][j].num){
-                k++;
+                same++;
             }
-            j++;
         }
-        i++;
     }
-
-    if(k > 0){
-        l = FALSE;
-    } else {
-        l = TRUE;
-    }
-    return l;
+    return (same > 0) ? FALSE : TRUE;
 }
 
-// NEW ATTEMPT
-/*  Find all the possible numbers for a grid
-    Then do a DFS
-    DFS:
-        - if puzzle solved: return 1
-        - else do a recursion:
-            - check if a number is legal
-            - if legal: call the next one
-            - if next returns 0:
-                - try another number
-*/
-
-int new(int row, int col){
-    // First check if puzzle solved
-    if (row > 8) {
-        return 1;
-    }
-    // Then check if grid is empty
+// Solve using DFS (recursion) 
+int solve(int row, int col){
+    // First check if grid is empty
     int next_row, next_col;
     while (box[row][col].given == TRUE) {
         if (col < 8) {
@@ -264,33 +181,25 @@ int new(int row, int col){
         next_row = row + 1;
         next_col = 0;
     }
+    // Check if puzzle solved
+    if (row > 8) {
+        return TRUE;
+    }
     char a = '1';
-    int result = 0;
-    printf("%d %d\n", row, col);
     while (TRUE) {
-
-        if (row == 3 && col == 8 && a == '5') {
-                printf("\t%c\n", a);
-                printf("%d\n", compareCol(a, col));
-                printf("%d\n", compareRow(a, row));
-                printf("%d\n", compareReg(a, col, row));
-        }
         if (compareCol(a, col) == TRUE &&
            compareRow(a, row) == TRUE &&
            compareReg(a, col, row) == TRUE) {
             box[row][col].num = a;
-            
-            result = new(next_row, next_col);
-            if (result) {
-                return 1;
+            if (solve(next_row, next_col)) {
+                return TRUE;
             }
         }    
         a++;
-        if (a == ':' && !result) {
-            return 0;
-        } else if (a == ':') {
-            a = '1';
+        if (a == ':') {
+            box[row][col].num = '0';
+            return FALSE;
         }
     }
-    return 0;
+    return FALSE;
 }
